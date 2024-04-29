@@ -46,7 +46,7 @@ async function run() {
 
     app.post('/addProduct', async(req,res)=>{
       const result = await productCollection.insertOne(req.body);
-      console.log(result)
+      // console.log(result)
       res.send(result);
     });
 
@@ -54,11 +54,18 @@ async function run() {
       console.log(req.params.email)
       // console.log(email);
       const result = await productCollection.find({email:req.params.email}).toArray();
-      console.log(result);
+      // console.log(result);
       res.send(result);
-   
+    });
 
-    })
+    app.get('/singleItem/:id', async(req,res)=>{
+      // console.log(req.params.id)
+      // console.log(email);
+      const result = await productCollection.findOne({_id:new ObjectId(req.params.id)});
+      // console.log(result);
+      res.send(result);
+    });
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
