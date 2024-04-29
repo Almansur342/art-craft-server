@@ -31,40 +31,67 @@ async function run() {
     const database = client.db("craftDB");
     const productCollection = database.collection("craftProduct");
 
-  
-    app.get('/craftItem', async(req,res)=>{
+
+    app.get('/craftItem', async (req, res) => {
       const cursor = productCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
-    app.get('/sixCraftItem', async(req,res)=>{
+    app.get('/sixCraftItem', async (req, res) => {
       const cursor = productCollection.find().limit(6);
       const result = await cursor.toArray();
       res.send(result);
     })
 
-    app.post('/addProduct', async(req,res)=>{
+    app.post('/addProduct', async (req, res) => {
       const result = await productCollection.insertOne(req.body);
       // console.log(result)
       res.send(result);
     });
 
-    app.get('/myCraftProduct/:email', async(req,res)=>{
+    app.get('/myCraftProduct/:email', async (req, res) => {
       console.log(req.params.email)
       // console.log(email);
-      const result = await productCollection.find({email:req.params.email}).toArray();
+      const result = await productCollection.find({ email: req.params.email }).toArray();
       // console.log(result);
       res.send(result);
     });
 
-    app.get('/singleItem/:id', async(req,res)=>{
+    app.get('/singleItem/:id', async (req, res) => {
       // console.log(req.params.id)
       // console.log(email);
-      const result = await productCollection.findOne({_id:new ObjectId(req.params.id)});
+      const result = await productCollection.findOne({ _id: new ObjectId(req.params.id) });
       // console.log(result);
       res.send(result);
     });
+
+    app.put('/updateProduct/:id', async (req, res) => {
+      console.log(req.params.id);
+      const query = { _id: new ObjectId(req.params.id) };
+      const data = {
+        $set: {
+          image:req.body.image,
+          item_name:req.body.item_name,
+          subcategory_name:req.body.subcategory_name,
+          short_description:req.body.short_description,
+          price:req.body.price,
+           rating:req.body.price,
+          customization:req.body.customization,
+          processing_time:req.body.processing_time,
+          stock_status:req.body.stock_status
+        }
+      }
+      const result = await productCollection.updateOne(query,data);
+      console.log(result);
+      res.send(result)
+    });
+
+    app.delete('/delete/:id', async(req,res)=>{
+      const result = await productCollection.deleteOne({_id: new ObjectId(req.params.id)});
+      console.log(result)
+      res.send(result)
+    })
 
 
     // Send a ping to confirm a successful connection
@@ -81,10 +108,10 @@ run().catch(console.dir);
 
 
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
   res.send('hello from art and craft server')
 });
 
-app.listen(port,()=>{
+app.listen(port, () => {
   console.log(`server is running on the port: ${port}`)
 });
