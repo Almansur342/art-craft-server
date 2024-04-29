@@ -37,9 +37,17 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+    app.get('/sixCraftItem', async(req,res)=>{
+      const cursor = productCollection.find().limit(6);
+      const result = await cursor.toArray();
+      res.send(result);
+    })
 
-    app.get("/sixCraftItem", (req,res)=>{
-      res.send(craft);
+
+    app.post('/addProduct', async(req,res)=>{
+      const result = await productCollection.insertOne(req.body);
+      console.log(result)
+      res.send(result);
     })
 
     // Send a ping to confirm a successful connection
