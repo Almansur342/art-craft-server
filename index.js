@@ -68,6 +68,7 @@ async function run() {
 
     app.put('/updateProduct/:id', async (req, res) => {
       console.log(req.params.id);
+      console.log(req.body);
       const query = { _id: new ObjectId(req.params.id) };
       const data = {
         $set: {
@@ -76,7 +77,7 @@ async function run() {
           subcategory_name:req.body.subcategory_name,
           short_description:req.body.short_description,
           price:req.body.price,
-           rating:req.body.price,
+          rating:req.body.price,
           customization:req.body.customization,
           processing_time:req.body.processing_time,
           stock_status:req.body.stock_status
