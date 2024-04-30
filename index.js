@@ -37,6 +37,11 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    // app.get('/craftItem', async (req, res) => {
+    //   const cursor = productCollection.find();
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // });
 
     app.get('/sixCraftItem', async (req, res) => {
       const cursor = productCollection.find().limit(6);
