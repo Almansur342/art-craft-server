@@ -31,17 +31,16 @@ async function run() {
     const database = client.db("craftDB");
     const productCollection = database.collection("craftProduct");
 
+    const categoryDatabase = client.db("categoryCraftDB");
+    const categoryProduct = categoryDatabase.collection("categoryCraftProduct");
+
 
     app.get('/craftItem', async (req, res) => {
       const cursor = productCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
-    // app.get('/craftItem', async (req, res) => {
-    //   const cursor = productCollection.find();
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    // });
+   
 
     app.get('/sixCraftItem', async (req, res) => {
       const cursor = productCollection.find().limit(6);
@@ -60,6 +59,13 @@ async function run() {
       // console.log(email);
       const result = await productCollection.find({ email: req.params.email }).toArray();
       // console.log(result);
+      res.send(result);
+    });
+    app.get('/relatedProduct/:subcategory_name', async (req, res) => {
+      // console.log(req.params.subcategory_name)
+      console.log(req.params.subcategory_name);
+      const result = await productCollection.find({subcategory_name:req.params.subcategory_name}).toArray();
+      console.log(result);
       res.send(result);
     });
 
@@ -97,7 +103,13 @@ async function run() {
       const result = await productCollection.deleteOne({_id: new ObjectId(req.params.id)});
       console.log(result)
       res.send(result)
-    })
+    });
+
+     app.get('/categoryCraftItem', async (req, res) => {
+      const cursor = categoryProduct.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
 
     // Send a ping to confirm a successful connection
