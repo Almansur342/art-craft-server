@@ -4,10 +4,15 @@ require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
 
-
+const corsOptions = {
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}
 
 // middleware
-app.use(cors());
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 
@@ -26,8 +31,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    // await client.connect();
+
     const database = client.db("craftDB");
     const productCollection = database.collection("craftProduct");
 
@@ -40,7 +44,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
-   
+
 
     app.get('/sixCraftItem', async (req, res) => {
       const cursor = productCollection.find().limit(6);
@@ -64,7 +68,7 @@ async function run() {
     app.get('/relatedProduct/:subcategory_name', async (req, res) => {
       // console.log(req.params.subcategory_name)
       console.log(req.params.subcategory_name);
-      const result = await productCollection.find({subcategory_name:req.params.subcategory_name}).toArray();
+      const result = await productCollection.find({ subcategory_name: req.params.subcategory_name }).toArray();
       console.log(result);
       res.send(result);
     });
@@ -83,38 +87,36 @@ async function run() {
       const query = { _id: new ObjectId(req.params.id) };
       const data = {
         $set: {
-          image:req.body.image,
-          item_name:req.body.item_name,
-          subcategory_name:req.body.subcategory_name,
-          short_description:req.body.short_description,
-          price:req.body.price,
-          rating:req.body.price,
-          customization:req.body.customization,
-          processing_time:req.body.processing_time,
-          stock_status:req.body.stock_status
+          image: req.body.image,
+          item_name: req.body.item_name,
+          subcategory_name: req.body.subcategory_name,
+          short_description: req.body.short_description,
+          price: req.body.price,
+          rating: req.body.price,
+          customization: req.body.customization,
+          processing_time: req.body.processing_time,
+          stock_status: req.body.stock_status
         }
       }
-      const result = await productCollection.updateOne(query,data);
+      const result = await productCollection.updateOne(query, data);
       console.log(result);
       res.send(result)
     });
 
-    app.delete('/delete/:id', async(req,res)=>{
-      const result = await productCollection.deleteOne({_id: new ObjectId(req.params.id)});
+    app.delete('/delete/:id', async (req, res) => {
+      const result = await productCollection.deleteOne({ _id: new ObjectId(req.params.id) });
       console.log(result)
       res.send(result)
     });
 
-     app.get('/categoryCraftItem', async (req, res) => {
+    app.get('/categoryCraftItem', async (req, res) => {
       const cursor = categoryProduct.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
 
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
